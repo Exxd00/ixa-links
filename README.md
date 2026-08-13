@@ -1,11 +1,14 @@
 # IXA Links Hub
 
-Eine schnelle, responsive 3D-Link-in-Bio-Seite für IXA Agency.
+Ein responsiver, interaktiver Links Hub für IXA Agency auf Basis von Next.js und React.
 
-## Inhalte anpassen
+## Entwicklung
 
-Die Linkziele und Texte stehen direkt in `index.html`. Das 3D-Modell liegt als GLB unter `assets/3d/ixa-logo.glb`; die editierbare Blender-Datei liegt daneben.
+```bash
+npm install
+npm run dev
+```
 
-Vor der endgültigen Domainaufschaltung müssen die vollständigen Anbieterangaben im Impressum und die Angaben zum Verantwortlichen in der Datenschutzerklärung ergänzt werden.
+Der Produktions-Build wird mit `npm run build` erstellt. Vercel erkennt das Projekt automatisch als Next.js-Anwendung.
 
-Zum lokalen Starten genügt ein statischer Webserver, zum Beispiel `npx serve .`.
+Die Hauptoberfläche befindet sich in `app/page.jsx`, das Design in `app/globals.css`. Vor der endgültigen Domainaufschaltung müssen die vollständigen Anbieterangaben im Impressum und in der Datenschutzerklärung ergänzt werden.
