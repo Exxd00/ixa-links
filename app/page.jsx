@@ -139,7 +139,7 @@ function Splash({ onEnter, short }) {
 }
 
 function OrbitSculpture() {
-  return <div className="orbit" aria-hidden="true"><i/><i/><i/><b/><span/><span/><span/></div>;
+  return <div className="orbit" aria-hidden="true"><i/><i/><i/><b/><span>♥</span><span>➤</span><span>●</span></div>;
 }
 
 function LeadsSculpture() {
@@ -151,6 +151,7 @@ function Icon({ name }) {
     instagram: <><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></>,
     whatsapp: <><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 21l1.7-4.7a8.5 8.5 0 1 1 15.8-4.6Z"/><path d="M8 8c1 4 4 7 8 8l1.2-2.1-2.6-1.2-.9 1c-1.8-.8-3.2-2.2-4-4l1-.9L9.5 6.3 8 8Z"/></>,
     phone: <path d="M7 3H4.5A1.5 1.5 0 0 0 3 4.5C3 13.6 10.4 21 19.5 21a1.5 1.5 0 0 0 1.5-1.5V17l-4-1-1.2 2a15.5 15.5 0 0 1-9.8-9.8L8 7 7 3Z"/>,
+    email: <><rect x="2.5" y="4" width="19" height="16" rx="2"/><path d="m4 7 8 6 8-6"/></>,
     theme: <path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.6 8.6 0 1 0 20.2 15.2Z"/>,
   };
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
@@ -158,6 +159,23 @@ function Icon({ name }) {
 
 function ServiceCard({ type, href }) {
   const isSoon = type === 'smm';
+  const cardRef = useRef(null);
+  const tilt = (event) => {
+    const card = cardRef.current;
+    if (!card || isSoon) return;
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - .5;
+    const y = (event.clientY - rect.top) / rect.height - .5;
+    card.style.setProperty('--card-rx', `${-y * 7}deg`);
+    card.style.setProperty('--card-ry', `${x * 9}deg`);
+    card.style.setProperty('--glow-x', `${(x + .5) * 100}%`);
+    card.style.setProperty('--glow-y', `${(y + .5) * 100}%`);
+  };
+  const resetTilt = () => {
+    if (!cardRef.current) return;
+    cardRef.current.style.setProperty('--card-rx', '0deg');
+    cardRef.current.style.setProperty('--card-ry', '0deg');
+  };
   const content = (
     <>
       <span className="card-index">{isSoon ? '01' : '02'}</span>
@@ -167,18 +185,26 @@ function ServiceCard({ type, href }) {
         <small>{isSoon ? 'Demnächst' : 'ixa-leads.de'}</small>
       </div>
       {isSoon ? <OrbitSculpture /> : <LeadsSculpture />}
-      {!isSoon && <span className="card-arrow">↗</span>}
+      <span className={`status-pill ${isSoon ? '' : 'active'}`}>{isSoon ? 'Bald verfügbar' : 'Aktiv'}</span>
+      {!isSoon && <span className="enter-label">Website öffnen <b>→</b></span>}
     </>
   );
-  if (isSoon) return <article className="service-card soon-card" aria-disabled="true">{content}</article>;
-  return <a className="service-card leads-card" href={href} target="_blank" rel="noopener noreferrer">{content}</a>;
+  if (isSoon) return <article ref={cardRef} className="service-card soon-card" aria-disabled="true">{content}</article>;
+  return <a ref={cardRef} className="service-card leads-card" href={href} target="_blank" rel="noopener noreferrer" onPointerMove={tilt} onPointerLeave={resetTilt}>{content}</a>;
 }
 
 function Hub({ theme, setTheme }) {
   return (
     <main className="hub">
       <ParticleField phase="hub" />
-      <header className="hub-mark"><EyeLogo compact /></header>
+      <button className="hub-theme" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Farbschema wechseln"><Icon name="theme"/></button>
+      <header className="hub-hero">
+        <EyeLogo compact />
+        <span>IXA Links Hub</span>
+        <div className="hero-tech-eye" aria-hidden="true"><i/><i/><b/></div>
+        <h1>Fokus.<br/>Aufbau.<br/><em>Wachstum.</em></h1>
+        <p>Zwei Services. Ein Ziel:<br/>Dein digitales Wachstum.</p>
+      </header>
       <section className="cards" aria-label="IXA Angebote">
         <ServiceCard type="smm" />
         <ServiceCard type="leads" href="https://ixa-leads.de" />
@@ -187,7 +213,7 @@ function Hub({ theme, setTheme }) {
         <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Icon name="instagram"/></a>
         <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><Icon name="whatsapp"/></a>
         <a href="tel:+491629155408" aria-label="+49 162 9155408 anrufen"><Icon name="phone"/></a>
-        <button type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Farbschema wechseln"><Icon name="theme"/></button>
+        <a href="mailto:info@ixa-agency.com" aria-label="E-Mail schreiben"><Icon name="email"/></a>
       </nav>
       <footer><Link href="/impressum">Impressum</Link><span>·</span><Link href="/datenschutz">Datenschutz</Link></footer>
     </main>
