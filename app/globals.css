@@ -7,7 +7,7 @@ a,button{-webkit-tap-highlight-color:transparent}
 button{font:inherit}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-.splash-screen{position:fixed;z-index:100;inset:0;min-height:100svh;display:grid;place-items:center;overflow:clip;background:var(--page);color:var(--ink);animation:splash-life 5s ease both}
+.splash-screen{position:fixed;z-index:100;inset:0;min-height:100svh;display:grid;place-items:center;overflow:clip;background:var(--page);color:var(--ink);animation:splash-life 3.5s ease both}
 .splash-screen::before{content:"";position:absolute;width:min(78vw,430px);aspect-ratio:1;border:1px solid rgba(100,224,213,.14);border-radius:50%;box-shadow:inset 0 0 80px rgba(100,224,213,.035),0 0 90px rgba(100,224,213,.05)}
 .splash-glow{position:absolute;width:min(48vw,240px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(100,224,213,.14),transparent 68%);filter:blur(8px);animation:splash-glow 2.4s ease-in-out infinite}
 .ixa-brand{position:relative;z-index:1;display:flex;align-items:center;flex-direction:column;color:var(--ink)}

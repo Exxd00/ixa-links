@@ -152,7 +152,7 @@ export default function Home() {
   }, [theme]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setShowSplash(false), 5000);
+    const timer = window.setTimeout(() => setShowSplash(false), 3500);
     return () => window.clearTimeout(timer);
   }, []);
 
