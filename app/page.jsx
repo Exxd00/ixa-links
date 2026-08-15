@@ -140,11 +140,44 @@ function Splash({ onEnter, short }) {
 }
 
 function OrbitSculpture() {
-  return <div className="social-phone" aria-hidden="true"><div className="phone-screen"><i/><i/><i/><b/></div><span>♥</span><span>●</span><span>↗</span></div>;
+  return <div className="social-phone" aria-hidden="true">
+    <div className="social-float social-growth"><b>+24,6%</b><small>Follower</small></div>
+    <div className="social-float social-views"><b>128K</b><small>Views</small></div>
+    <div className="phone-shell">
+      <div className="phone-island" />
+      <div className="insta-head"><b>Instagram</b><span>♡</span></div>
+      <div className="stories"><i/><i/><i/><i/></div>
+      <div className="reel-preview">
+        <div className="reel-label">REEL</div>
+        <div className="play-mark">▶</div>
+        <div className="reel-copy"><b>Build your brand.</b><small>@ixa_agency</small></div>
+        <div className="reel-actions"><span>♥<small>2.8K</small></span><span>◯<small>184</small></span><span>↗<small>92</small></span></div>
+      </div>
+      <div className="insta-nav"><i/><i/><b>＋</b><i/><i/></div>
+    </div>
+  </div>;
 }
 
 function LeadsSculpture() {
-  return <div className="leads-dashboard" aria-hidden="true"><span>12.458<small>+23,6%</small></span><span>284<small>+18,7%</small></span><span>24,31 €<small>−11,2%</small></span><i/><b/></div>;
+  return <div className="leads-dashboard" aria-hidden="true">
+    <div className="ads-float"><b>284</b><small>Conversions</small></div>
+    <div className="ads-window">
+      <div className="ads-head"><span>G</span><b>Google Ads</b><i/><i/><i/></div>
+      <div className="ads-kpis">
+        <span><small>Klicks</small><b>12.458</b><em>+23,6%</em></span>
+        <span><small>Anfragen</small><b>284</b><em>+18,7%</em></span>
+        <span><small>Kosten / Anfrage</small><b>24,31 €</b><em>−11,2%</em></span>
+      </div>
+      <div className="ads-chart">
+        <div className="chart-title"><b>Performance</b><small>Letzte 30 Tage</small></div>
+        <svg viewBox="0 0 320 112" preserveAspectRatio="none"><path className="chart-area" d="M0 97L35 87 69 91 104 70 139 77 176 49 211 58 248 30 282 40 320 10V112H0Z"/><path className="chart-line" d="M0 97L35 87 69 91 104 70 139 77 176 49 211 58 248 30 282 40 320 10"/></svg>
+      </div>
+      <div className="ads-detail">
+        <div className="ads-donut"><i/><b>4,8×</b><small>ROAS</small></div>
+        <div className="campaigns"><b>Top Kampagnen</b><span>Search <i style={{'--bar':'91%'}}/></span><span>Leads <i style={{'--bar':'73%'}}/></span><span>Remarketing <i style={{'--bar':'54%'}}/></span></div>
+      </div>
+    </div>
+  </div>;
 }
 
 function Icon({ name }) {
@@ -198,6 +231,9 @@ function Hub({ theme, setTheme }) {
   return (
     <main className="hub">
       <ParticleField phase="hub" />
+      <button className="hub-theme" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}>
+        <Icon name="theme"/><span>{theme === 'dark' ? 'Hell' : 'Dunkel'}</span>
+      </button>
       <header className="hub-hero">
         <EyeLogo compact />
         <h1>Sichtbar. Messbar. Wirksam.</h1>
@@ -224,7 +260,7 @@ function ThemeChooser({ onChoose }) {
     <EyeLogo compact />
     <p>Willkommen bei IXA</p>
     <h1>Wähle deinen<br/>Fokus.</h1>
-    <span>Du kannst die Darstellung später über deine Browserdaten zurücksetzen.</span>
+    <span>Du kannst die Darstellung später jederzeit oben wechseln.</span>
     <div className="theme-options">
       <button className="light-choice" type="button" onClick={() => onChoose('light')}><b>☀</b><strong>Hell</strong><small>Klar · Offen · Präzise</small></button>
       <button className="dark-choice" type="button" onClick={() => onChoose('dark')}><b>◐</b><strong>Dunkel</strong><small>Fokussiert · Ruhig · Premium</small></button>
