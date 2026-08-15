@@ -7,48 +7,16 @@ const INSTAGRAM = 'https://www.instagram.com/ixa_agency?igsh=MXd2aDI3dGx5dTZ0cA=
 const WHATSAPP = 'https://wa.me/491629155408';
 const LINKEDIN = 'https://www.linkedin.com/company/ixa-agency';
 
-function IXALogo({ className = '', motion = 'static', interactive = false }) {
-  const [pressed, setPressed] = useState(false);
-  const pressTimer = useRef(null);
-
-  useEffect(() => () => window.clearTimeout(pressTimer.current), []);
-
-  const replay = () => {
-    if (!interactive) return;
-    window.clearTimeout(pressTimer.current);
-    setPressed(false);
-    window.requestAnimationFrame(() => {
-      setPressed(true);
-      pressTimer.current = window.setTimeout(() => setPressed(false), 440);
-    });
-  };
-
-  const content = <>
-    <svg viewBox="0 0 1000 520" aria-hidden="true">
-      <path className="logo-wing logo-wing-left" d="M58 250C236 86 364 28 476 26v78c-94 4-193 47-310 146 117 99 216 142 310 146v78C364 472 236 414 58 250Z" />
-      <path className="logo-wing logo-wing-right" d="M942 250C764 86 636 28 524 26v78c94 4 193 47 310 146-117 99-216 142-310 146v78C636 472 764 414 942 250Z" />
-      <circle className="logo-pupil" cx="500" cy="250" r="72" />
-      <g className="logo-flow logo-flow-leads">
-        <circle cx="345" cy="250" r="22"/><path d="m361 266 19 19M403 250h44M447 250l-12-10M447 250l-12 10"/><circle cx="472" cy="250" r="8"/><path d="m466 250 5 5 10-13"/>
-      </g>
-      <g className="logo-flow logo-flow-smm">
-        <rect x="548" y="224" width="40" height="50" rx="6"/><path d="M600 240h31M600 258h23"/><circle cx="650" cy="249" r="6"/><circle cx="673" cy="249" r="6"/><path d="M692 226h44a9 9 0 0 1 9 9v23a9 9 0 0 1-9 9h-17l-12 12v-12h-15a9 9 0 0 1-9-9v-23a9 9 0 0 1 9-9Z"/>
-      </g>
-      <circle className="logo-pulse" cx="500" cy="250" r="102" />
-    </svg>
-    <strong>IXA AGENCY</strong>
-  </>;
-
-  if (interactive) return (
-    <button className={`ixa-brand ixa-brand-button ${className} logo-${motion}${pressed ? ' logo-tap' : ''}`} type="button" onPointerDown={replay} onKeyDown={(event) => {
-      if (event.key === 'Enter' || event.key === ' ') replay();
-    }} aria-label="IXA Logo Animation abspielen">
-      {content}
-    </button>
-  );
-
+function IXALogo({ className = '' }) {
   return (
-    <div className={`ixa-brand ${className} logo-${motion}`} aria-label="IXA Agency">{content}</div>
+    <div className={`ixa-brand ${className}`} aria-label="IXA Agency">
+      <svg viewBox="0 0 1000 520" aria-hidden="true">
+        <path d="M58 250C236 86 364 28 476 26v78c-94 4-193 47-310 146 117 99 216 142 310 146v78C364 472 236 414 58 250Z" />
+        <path d="M942 250C764 86 636 28 524 26v78c94 4 193 47 310 146-117 99-216 142-310 146v78C636 472 764 414 942 250Z" />
+        <circle cx="500" cy="250" r="72" />
+      </svg>
+      <strong>IXA AGENCY</strong>
+    </div>
   );
 }
 
@@ -72,72 +40,45 @@ function Icon({ name }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 }
 
-function useElementVisibility() {
+function useStoryMotion() {
   const ref = useRef(null);
-  const [visible, setVisible] = useState(true);
+  const started = useRef(false);
+  const [motion, setMotion] = useState('idle');
 
   useEffect(() => {
-    if (!ref.current) return undefined;
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.35 });
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, visible };
-}
-
-function useAnimationCoordinator(enabled) {
-  const [phase, setPhase] = useState('idle');
-
-  useEffect(() => {
-    if (!enabled) return undefined;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (reduced.matches) {
-      setPhase('reduced');
+    const card = ref.current;
+    if (!card) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setMotion('complete');
       return undefined;
     }
 
-    let timer;
-    let cycleStart = performance.now();
-    const update = () => {
-      window.clearTimeout(timer);
-      if (document.visibilityState !== 'visible') {
-        setPhase('idle');
-        return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        if (!started.current) started.current = true;
+        setMotion((current) => current === 'complete' ? current : 'running');
+      } else if (started.current) {
+        setMotion((current) => current === 'running' ? 'paused' : current);
       }
-      const elapsed = (performance.now() - cycleStart) % 12000;
-      const next = elapsed < 2100 ? ['logo', 2100] : elapsed < 5700 ? ['leads', 5700] : elapsed < 6300 ? ['idle', 6300] : elapsed < 9900 ? ['smm', 9900] : ['idle', 12000];
-      setPhase(next[0]);
-      timer = window.setTimeout(update, Math.max(40, next[1] - elapsed));
-    };
-    const handleVisibility = () => {
-      window.clearTimeout(timer);
-      if (document.visibilityState === 'visible') cycleStart = performance.now();
-      update();
-    };
+    }, { threshold: 0.55 });
 
-    update();
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => {
-      window.clearTimeout(timer);
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
-  }, [enabled]);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, []);
 
-  return phase;
+  return { ref, motion, finish: () => setMotion('complete') };
 }
 
-function LeadsStory({ active, reduced }) {
+function LeadsStory({ motion, onFinish }) {
   return (
-    <div className={`service-story leads-story story-${reduced ? 'complete' : active ? 'running' : 'complete'}`} aria-hidden="true">
+    <div className={`service-story leads-story story-${motion}`} aria-hidden="true">
       <svg className="story-path" viewBox="0 0 180 126" preserveAspectRatio="none">
         <path d="M45 23 C91 23 72 54 112 58 S137 91 91 101" />
       </svg>
       <div className="lead-search story-step">
         <svg viewBox="0 0 20 20"><circle cx="8" cy="8" r="5"/><path d="m12 12 5 5"/></svg>
-        <span>Google Ads Agentur</span>
+        <span>Google Suche</span>
       </div>
-      <div className="lead-result story-step"><small>Anzeige</small><b>IXA Agency</b><span>Mehr Anfragen gewinnen</span></div>
       <div className="lead-page story-step">
         <div className="mini-browser"><i/><i/><i/></div>
         <b>IXA Landingpage</b>
@@ -147,15 +88,15 @@ function LeadsStory({ active, reduced }) {
       <div className="lead-request story-step">
         <b>Neue Anfrage</b>
         <span className="lead-source">Quelle: Google Ads</span>
-        <em className="lead-tracked">✓ erfasst</em>
+        <em className="lead-tracked" onAnimationEnd={onFinish}>✓ erfasst</em>
       </div>
     </div>
   );
 }
 
-function SmmStory({ active, reduced }) {
+function SmmStory({ motion, onFinish }) {
   return (
-    <div className={`service-story smm-story story-${reduced ? 'complete' : active ? 'running' : 'complete'}`} aria-hidden="true">
+    <div className={`service-story smm-story story-${motion}`} aria-hidden="true">
       <svg className="story-path" viewBox="0 0 180 126" preserveAspectRatio="none">
         <path d="M69 29 C134 4 169 44 137 69 S166 111 112 108" />
       </svg>
@@ -173,21 +114,21 @@ function SmmStory({ active, reduced }) {
       <span className="engagement-node node-like story-step">♥</span>
       <span className="engagement-node node-comment story-step">●</span>
       <span className="engagement-node node-save story-step">⌑</span>
-      <div className="reach-chip story-step"><b>2.4K</b><span>Views</span></div>
       <div className="social-message story-step"><b>Neue Nachricht</b><span>Ich interessiere mich…</span></div>
-      <div className="demand-badge story-step"><span>✓</span><b>Neue Anfrage</b></div>
+      <div className="demand-badge story-step" onAnimationEnd={onFinish}><span>✓</span><b>Neue Anfrage</b></div>
     </div>
   );
 }
 
-function ServiceCard({ type, href, active, reduced }) {
-  const { ref, visible } = useElementVisibility();
+function ServiceCard({ type, href, delay }) {
+  const { ref, motion, finish } = useStoryMotion();
   const leads = type === 'leads';
   return (
     <a
       ref={ref}
       className={`service-card ${leads ? 'leads-card' : 'smm-card'}`}
       href={href}
+      style={{ '--story-delay': `${delay}ms` }}
       aria-label={`${leads ? 'IXA Leads' : 'IXA SMM'} öffnen`}
     >
       <div className="card-copy">
@@ -196,7 +137,7 @@ function ServiceCard({ type, href, active, reduced }) {
         <p>{leads ? 'Aus Suche wird Anfrage.' : 'Aus Aufmerksamkeit wird Nachfrage.'}</p>
         <span className="card-arrow" aria-hidden="true">→</span>
       </div>
-      {leads ? <LeadsStory active={active && visible} reduced={reduced}/> : <SmmStory active={active && visible} reduced={reduced}/>}
+      {leads ? <LeadsStory motion={motion} onFinish={finish}/> : <SmmStory motion={motion} onFinish={finish}/>}
       <span className="sr-only">{leads ? 'Google Suche führt zur Landingpage, zur Anfrage und wird als Google Ads Quelle erfasst.' : 'Content erzeugt Aufmerksamkeit, Interaktion, eine Nachricht und schließlich eine neue Anfrage.'}</span>
     </a>
   );
@@ -205,7 +146,6 @@ function ServiceCard({ type, href, active, reduced }) {
 export default function Home() {
   const [theme, setTheme] = useState('light');
   const [showSplash, setShowSplash] = useState(true);
-  const phase = useAnimationCoordinator(!showSplash);
 
   useEffect(() => {
     const saved = localStorage.getItem('ixa-theme');
@@ -235,13 +175,13 @@ export default function Home() {
       </div>
 
       <header className="home-hero">
-        <IXALogo className="home-brand" motion={phase === 'logo' ? 'active' : phase === 'reduced' ? 'reduced' : 'idle'} interactive />
+        <IXALogo className="home-brand" />
         <h1><span>Sichtbar.</span><span>Messbar.</span><span>Wirksam.</span></h1>
       </header>
 
       <section className="service-grid" aria-label="IXA Leistungen">
-        <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'}/>
-        <ServiceCard type="smm" href="https://ixa-smm.de" active={phase === 'smm'} reduced={phase === 'reduced'}/>
+        <ServiceCard type="leads" href="https://ixa-leads.de" delay={350}/>
+        <ServiceCard type="smm" href="https://ixa-smm.de" delay={650}/>
       </section>
 
       <nav className="social-links" aria-label="IXA Kontakt">
