@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import IXAEye3D from './IXAEye3D';
+import LiveParticleField from './LiveParticleField';
 
 const INSTAGRAM = 'https://www.instagram.com/ixa_agency?igsh=MXd2aDI3dGx5dTZ0cA==';
 const WHATSAPP = 'https://wa.me/491629155408';
@@ -226,6 +227,8 @@ export default function Home() {
   if (showSplash) return <SplashScreen />;
 
   return (
+    <>
+    <LiveParticleField theme={theme} />
     <main className="home-shell">
       <div className="home-topbar">
         <button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}>
@@ -253,5 +256,6 @@ export default function Home() {
 
       <footer className="home-footer"><span>© IXA</span><Link href="/datenschutz">Datenschutz</Link><Link href="/impressum">Impressum</Link></footer>
     </main>
+    </>
   );
 }
