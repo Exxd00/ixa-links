@@ -63,13 +63,13 @@ function SplashScreen() {
 
 function Icon({ name }) {
   const paths = {
-    instagram: <><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></>,
-    whatsapp: <><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 21l1.7-4.7a8.5 8.5 0 1 1 15.8-4.6Z"/><path d="M8 8c1 4 4 7 8 8l1.2-2.1-2.6-1.2-.9 1c-1.8-.8-3.2-2.2-4-4l1-.9L9.5 6.3 8 8Z"/></>,
-    phone: <path d="M7 3H4.5A1.5 1.5 0 0 0 3 4.5C3 13.6 10.4 21 19.5 21a1.5 1.5 0 0 0 1.5-1.5V17l-4-1-1.2 2a15.5 15.5 0 0 1-9.8-9.8L8 7 7 3Z"/>,
-    linkedin: <><path d="M7 9v10M7 5.5v.1M11 19v-6c0-2 1.2-3.5 3.2-3.5S18 10.8 18 13v6M3.5 9H7v10H3.5z"/><path d="M11 9h3v1.5"/></>,
+    instagram: <><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.15"/><circle className="icon-fill" cx="17.45" cy="6.55" r="1.05"/></>,
+    whatsapp: <path className="icon-fill" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.19 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35m-5.42 7.4h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37A9.86 9.86 0 1 1 12.05 21.78M20.45 3.49A11.82 11.82 0 0 0 12 0C5.5 0 .2 5.3.2 11.81c0 2.08.54 4.11 1.57 5.9L.1 23.81l6.24-1.64A11.8 11.8 0 0 0 12 23.62c6.51 0 11.81-5.3 11.81-11.81 0-3.15-1.23-6.12-3.46-8.32Z"/>,
+    phone: <path d="M21 16.75v2.75a1.8 1.8 0 0 1-1.96 1.8 18.2 18.2 0 0 1-7.93-2.82 17.9 17.9 0 0 1-5.55-5.55A18.2 18.2 0 0 1 2.74 5 1.8 1.8 0 0 1 4.53 3h2.75a1.8 1.8 0 0 1 1.78 1.55c.12.88.34 1.75.64 2.58a1.8 1.8 0 0 1-.4 1.9l-1.16 1.16a14.45 14.45 0 0 0 5.55 5.55l1.16-1.16a1.8 1.8 0 0 1 1.9-.4c.83.3 1.7.52 2.58.64A1.8 1.8 0 0 1 21 16.75Z"/>,
+    linkedin: <path className="icon-fill" d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.04c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/>,
     theme: <path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.6 8.6 0 1 0 20.2 15.2Z"/>,
   };
-  return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
+  return <svg className={`icon-${name}`} viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 }
 
 function useElementVisibility() {
@@ -319,10 +319,10 @@ export default function Home() {
       </section>
 
       <nav className="social-links" aria-label="IXA Kontakt">
-        <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Icon name="linkedin"/></a>
-        <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Icon name="instagram"/></a>
-        <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><Icon name="whatsapp"/></a>
-        <a href="tel:+491629155408" aria-label="+49 162 9155408 anrufen"><Icon name="phone"/></a>
+        <a className="social-link social-linkedin" href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Icon name="linkedin"/></a>
+        <a className="social-link social-instagram" href={INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Icon name="instagram"/></a>
+        <a className="social-link social-whatsapp" href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><Icon name="whatsapp"/></a>
+        <a className="social-link social-phone" href="tel:+491629155408" aria-label="+49 162 9155408 anrufen"><Icon name="phone"/></a>
       </nav>
 
       <footer className="home-footer"><span>© IXA</span><Link href="/datenschutz">Datenschutz</Link><Link href="/impressum">Impressum</Link></footer>
