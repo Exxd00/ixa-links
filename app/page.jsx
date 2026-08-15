@@ -217,26 +217,30 @@ function SmmStory({ active }) {
 function ServiceCard({ type, href, active, reduced, externalRef, energized }) {
   const { ref, visible } = useElementVisibility();
   const leads = type === 'leads';
+  const Card = leads ? 'a' : 'article';
   return (
-    <a
+    <Card
       ref={(node) => {
         ref.current = node;
         if (externalRef) externalRef.current = node;
       }}
       className={`service-card ${leads ? 'leads-card' : 'smm-card'}${energized ? ' is-energized' : ''}`}
-      href={href}
-      aria-label={`${leads ? 'IXA Leads' : 'IXA SMM'} öffnen`}
+      {...(leads
+        ? { href, 'aria-label': 'IXA Leads öffnen' }
+        : { 'aria-label': 'IXA SMM – bald verfügbar' })}
     >
       <div className="card-copy">
         <span className="service-kicker">IXA</span>
         <h2>{leads ? 'LEADS' : 'SMM'}</h2>
         {!leads && <span className="service-expansion">Social Media Marketing</span>}
         <p>{leads ? 'Aus Suche wird Anfrage.' : 'Aus Aufmerksamkeit wird Nachfrage.'}</p>
-        <span className="card-arrow" aria-hidden="true">→</span>
+        {leads
+          ? <span className="card-arrow" aria-hidden="true">→</span>
+          : <span className="soon-badge">Bald verfügbar</span>}
       </div>
       {leads ? <LeadsStory active={!reduced && active && visible}/> : <SmmStory active={!reduced && active && visible}/>}
-      <span className="sr-only">{leads ? 'Google Suche führt zur Landingpage, zur Anfrage und wird als Google Ads Quelle erfasst.' : 'Content erzeugt Aufmerksamkeit, Interaktion, eine Nachricht und schließlich eine neue Anfrage.'}</span>
-    </a>
+      <span className="sr-only">{leads ? 'Google Suche führt zur Landingpage, zur Anfrage und wird als Google Ads Quelle erfasst.' : 'Content erzeugt Aufmerksamkeit, Interaktion, eine Nachricht und schließlich eine neue Anfrage. Dieser Service ist bald verfügbar.'}</span>
+    </Card>
   );
 }
 
@@ -317,7 +321,7 @@ export default function Home() {
 
       <section className="service-grid" aria-label="IXA Leistungen">
         <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'} externalRef={leadsCardRef} energized={Boolean(energyTransfer)}/>
-        <ServiceCard type="smm" href="https://ixa-smm.de" active={phase === 'smm'} reduced={phase === 'reduced'} externalRef={smmCardRef} energized={Boolean(energyTransfer)}/>
+        <ServiceCard type="smm" active={phase === 'smm'} reduced={phase === 'reduced'} externalRef={smmCardRef} energized={Boolean(energyTransfer)}/>
       </section>
 
       <nav className="social-links" aria-label="IXA Kontakt">
