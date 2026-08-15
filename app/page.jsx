@@ -7,16 +7,25 @@ const INSTAGRAM = 'https://www.instagram.com/ixa_agency?igsh=MXd2aDI3dGx5dTZ0cA=
 const WHATSAPP = 'https://wa.me/491629155408';
 const LINKEDIN = 'https://www.linkedin.com/company/ixa-agency';
 
-function IXALogo() {
+function IXALogo({ className = '' }) {
   return (
-    <div className="ixa-logo" aria-label="IXA Agency">
+    <div className={`ixa-brand ${className}`} aria-label="IXA Agency">
       <svg viewBox="0 0 1000 520" aria-hidden="true">
         <path d="M58 250C236 86 364 28 476 26v78c-94 4-193 47-310 146 117 99 216 142 310 146v78C364 472 236 414 58 250Z" />
         <path d="M942 250C764 86 636 28 524 26v78c94 4 193 47 310 146-117 99-216 142-310 146v78C636 472 764 414 942 250Z" />
         <circle cx="500" cy="250" r="72" />
       </svg>
-      <span>IXA</span>
+      <strong>IXA AGENCY</strong>
     </div>
+  );
+}
+
+function SplashScreen() {
+  return (
+    <section className="splash-screen" aria-label="IXA Agency wird geladen">
+      <div className="splash-glow" aria-hidden="true" />
+      <IXALogo className="splash-brand" />
+    </section>
   );
 }
 
@@ -128,6 +137,7 @@ function ServiceCard({ type, href, delay }) {
 
 export default function Home() {
   const [theme, setTheme] = useState('light');
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
     const saved = localStorage.getItem('ixa-theme');
@@ -141,18 +151,24 @@ export default function Home() {
     if (themeMeta) themeMeta.setAttribute('content', theme === 'dark' ? '#050606' : '#f7faf9');
   }, [theme]);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowSplash(false), 5000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (showSplash) return <SplashScreen />;
+
   return (
     <main className="home-shell">
       <div className="home-topbar">
-        <IXALogo />
         <button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}>
           <Icon name="theme"/><span>{theme === 'dark' ? 'Hell' : 'Dunkel'}</span>
         </button>
       </div>
 
       <header className="home-hero">
-        <h1><span>Sichtbar. Messbar.</span><span>Wirksam.</span></h1>
-        <p>Wachstum für dein Unternehmen.</p>
+        <IXALogo className="home-brand" />
+        <h1><span>Sichtbar.</span><span>Messbar.</span><span>Wirksam.</span></h1>
       </header>
 
       <section className="service-grid" aria-label="IXA Leistungen">
