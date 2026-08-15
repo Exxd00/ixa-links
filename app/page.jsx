@@ -230,6 +230,7 @@ function ServiceCard({ type, href, active, reduced, externalRef, energized }) {
       <div className="card-copy">
         <span className="service-kicker">IXA</span>
         <h2>{leads ? 'LEADS' : 'SMM'}</h2>
+        {!leads && <span className="service-expansion">Social Media Manager</span>}
         <p>{leads ? 'Aus Suche wird Anfrage.' : 'Aus Aufmerksamkeit wird Nachfrage.'}</p>
         <span className="card-arrow" aria-hidden="true">→</span>
       </div>
