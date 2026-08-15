@@ -3,7 +3,7 @@ import './globals.css';
 export const metadata = {
   title: 'IXA — Links Hub',
   description: 'IXA Agency — Social Media, Websites und Lead Generation.',
-  metadataBase: new URL('https://ixa-agency.com'),
+  metadataBase: new URL('https://ixa-agency.de'),
   openGraph: {
     title: 'IXA — Links Hub',
     description: 'Alle IXA Angebote an einem Ort.',
