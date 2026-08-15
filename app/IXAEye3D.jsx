@@ -24,10 +24,12 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
 
   useEffect(() => {
     activeRef.current = active;
+    apiRef.current?.requestRender?.();
   }, [active]);
 
   useEffect(() => {
     themeRef.current = theme;
+    apiRef.current?.requestRender?.();
   }, [theme]);
 
   useEffect(() => {
@@ -62,9 +64,14 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
       const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
       camera.position.set(0, 0, 11.8);
 
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: coarsePointer ? 'low-power' : 'high-performance',
+      });
       renderer.setClearColor(0x000000, 0);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarsePointer ? 1.5 : 1.75));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.12;
@@ -92,11 +99,17 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
       let model;
       let burstStart = -1;
       let appliedTheme = '';
+      let renderedWidth = 0;
+      let renderedHeight = 0;
+      let lastRenderTime = 0;
 
       const resize = () => {
         const rect = stage.getBoundingClientRect();
         const width = Math.max(1, Math.round(rect.width));
         const height = Math.max(1, Math.round(rect.height));
+        if (width === renderedWidth && height === renderedHeight) return;
+        renderedWidth = width;
+        renderedHeight = height;
         renderer.setSize(width, height, false);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
@@ -181,6 +194,7 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
         collectPieces(model);
         applyTheme();
         setReady(true);
+        startRendering();
       }, undefined, () => {
         if (!disposed) setReady(false);
       });
@@ -190,9 +204,10 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
         burstStart = performance.now();
         onBurstRef.current?.(stage.getBoundingClientRect());
         setBursting(true);
+        startRendering();
       };
 
-      apiRef.current = { burst: startBurst };
+      apiRef.current = { burst: startBurst, requestRender: () => startRendering() };
 
       if (!coarsePointer) {
         pointerMoveHandler = (event) => {
@@ -233,10 +248,18 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
       };
 
       const render = (now) => {
+        frame = 0;
         if (disposed || !visible) {
-          frame = 0;
           return;
         }
+        const burstingNow = burstStart >= 0;
+        const continuous = burstingNow || (!coarsePointer && !reducedMotion);
+        const frameInterval = burstingNow ? (coarsePointer ? 25 : 20) : 34;
+        if (continuous && lastRenderTime && now - lastRenderTime < frameInterval) {
+          frame = window.requestAnimationFrame(render);
+          return;
+        }
+        lastRenderTime = now;
         const elapsed = (now - animationStart) / 1000;
         applyTheme();
         pointerCurrent.lerp(pointerTarget, 0.075);
@@ -245,7 +268,7 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
           root.rotation.x = -0.035 - pointerCurrent.y * 0.13;
         }
         const focus = activeRef.current ? 1 : 0;
-        coreGlow.intensity = 7.2 + focus * 1.25 + Math.sin(elapsed * 1.65) * (coarsePointer ? 0.4 : 0.22);
+        coreGlow.intensity = 7.2 + focus * 1.25 + (reducedMotion ? 0 : Math.sin(elapsed * 1.65) * (coarsePointer ? 0.4 : 0.22));
         if (model && !reducedMotion && !coarsePointer) {
           model.position.z = Math.sin(elapsed * 1.05) * 0.025;
         } else if (model) {
@@ -253,7 +276,9 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
         }
         applyBurst(now);
         renderer.render(scene, camera);
-        frame = window.requestAnimationFrame(render);
+        if (burstStart >= 0 || (!coarsePointer && !reducedMotion)) {
+          frame = window.requestAnimationFrame(render);
+        }
       };
 
       const startRendering = () => {

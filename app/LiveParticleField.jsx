@@ -32,10 +32,13 @@ export default function LiveParticleField({ theme }) {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
     const dpr = Math.min(window.devicePixelRatio || 1, coarsePointer ? 1.25 : 1.5);
+    const frameInterval = coarsePointer ? 50 : 34;
     let width = 0;
     let height = 0;
     let particles = [];
     let frame = 0;
+    let frameTimer = 0;
+    let resizeTimer = 0;
     let lastTime = performance.now();
     let visible = document.visibilityState === 'visible';
 
@@ -52,8 +55,8 @@ export default function LiveParticleField({ theme }) {
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       const targetCount = coarsePointer
-        ? Math.max(18, Math.min(30, Math.round((width * height) / 12500)))
-        : Math.max(34, Math.min(58, Math.round((width * height) / 18000)));
+        ? Math.max(14, Math.min(22, Math.round((width * height) / 16500)))
+        : Math.max(26, Math.min(42, Math.round((width * height) / 24000)));
       particles = Array.from({ length: targetCount }, (_, index) => createParticle(width, height, index));
     };
 
@@ -96,16 +99,19 @@ export default function LiveParticleField({ theme }) {
     };
 
     const render = (time) => {
+      frame = 0;
       if (!visible) {
-        frame = 0;
         return;
       }
       paint(time, true);
-      frame = window.requestAnimationFrame(render);
+      frameTimer = window.setTimeout(() => {
+        frameTimer = 0;
+        if (visible) frame = window.requestAnimationFrame(render);
+      }, frameInterval);
     };
 
     const start = () => {
-      if (!frame && visible && !reducedMotion) {
+      if (!frame && !frameTimer && visible && !reducedMotion) {
         lastTime = performance.now();
         frame = window.requestAnimationFrame(render);
       }
@@ -118,11 +124,18 @@ export default function LiveParticleField({ theme }) {
         window.cancelAnimationFrame(frame);
         frame = 0;
       }
+      if (!visible && frameTimer) {
+        window.clearTimeout(frameTimer);
+        frameTimer = 0;
+      }
     };
 
     const handleResize = () => {
-      resize();
-      if (reducedMotion) paint(performance.now(), false);
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        resize();
+        if (reducedMotion) paint(performance.now(), false);
+      }, 120);
     };
 
     resize();
@@ -133,6 +146,8 @@ export default function LiveParticleField({ theme }) {
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
+      window.clearTimeout(frameTimer);
+      window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibility);
     };

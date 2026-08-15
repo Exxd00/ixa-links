@@ -161,17 +161,25 @@ function LeadsStory({ active }) {
 }
 
 function SmmStory({ active }) {
-  const [views, setViews] = useState(2400);
+  const viewsRef = useRef(null);
 
   useEffect(() => {
-    if (!active) return undefined;
+    const counter = viewsRef.current;
+    if (!counter) return undefined;
+    if (!active) {
+      counter.textContent = '2.4K';
+      return undefined;
+    }
     let value = 1280;
-    setViews(value);
+    const updateCounter = () => {
+      counter.textContent = `${(value / 1000).toFixed(1)}K`;
+    };
+    updateCounter();
     const timer = window.setInterval(() => {
       value += 34;
       if (value > 2860) value = 1280;
-      setViews(value);
-    }, 95);
+      updateCounter();
+    }, 180);
     return () => window.clearInterval(timer);
   }, [active]);
 
@@ -198,7 +206,7 @@ function SmmStory({ active }) {
       <span className="engagement-node node-like story-step"><svg viewBox="0 0 24 24"><path d="M20.8 4.7a5.4 5.4 0 0 0-7.6 0L12 5.9l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.7a5.4 5.4 0 0 0 0-7.6Z"/></svg></span>
       <span className="engagement-node node-comment story-step"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.5 9.5 0 0 1-4-.9L3 21l1.7-4.6A8.5 8.5 0 1 1 21 11.5Z"/></svg></span>
       <span className="engagement-node node-save story-step"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4V3Z"/></svg></span>
-      <div className="reach-chip story-step"><b>{(views / 1000).toFixed(1)}K</b><span>Views</span></div>
+      <div className="reach-chip story-step"><b ref={viewsRef}>2.4K</b><span>Views</span></div>
       <div className="social-message story-step"><b>Neue Nachricht</b><span>Ich interessiere mich…</span></div>
       <div className="demand-badge story-step"><span className="demand-check">✓</span><span className="demand-copy"><b>Neue Anfrage</b><small>via Social Media</small></span></div>
     </div>
@@ -276,11 +284,10 @@ export default function Home() {
     transferTimerRef.current = window.setTimeout(() => setEnergyTransfer(null), 2500);
   };
 
-  if (showSplash) return <SplashScreen />;
-
   return (
     <>
-    <LiveParticleField theme={theme} />
+    {showSplash && <SplashScreen />}
+    {!showSplash && <LiveParticleField theme={theme} />}
     {energyTransfer && (
       <div key={energyTransfer.id} className="energy-transfer" aria-hidden="true">
         <i
@@ -293,7 +300,7 @@ export default function Home() {
         />
       </div>
     )}
-    <main className="home-shell">
+    <main className={`home-shell${showSplash ? ' is-preloading' : ''}`} aria-hidden={showSplash || undefined} inert={showSplash ? true : undefined}>
       <div className="home-topbar">
         <button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}>
           <Icon name="theme"/><span>{theme === 'dark' ? 'Hell' : 'Dunkel'}</span>
