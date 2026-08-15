@@ -28,7 +28,7 @@ button{font:inherit}
 .theme-toggle:focus-visible,.ixa-brand-button:focus-visible,.service-card:focus-visible,.social-links a:focus-visible,.home-footer a:focus-visible{outline:2px solid var(--mint-dark);outline-offset:3px}
 
 .home-hero{padding:16px 0 20px;text-align:center}
-.home-brand{gap:16px}.home-brand svg{width:252px}.home-brand strong{font-size:19px}
+.home-brand{gap:16px;margin-inline:auto}.home-brand svg{width:252px}.home-brand strong{font-size:19px}
 .home-hero h1{display:flex;justify-content:center;gap:.48em;margin:13px 0 0;color:var(--muted);font-size:clamp(11px,3.35vw,16px);font-weight:750;line-height:1;letter-spacing:.045em;text-transform:uppercase}
 .home-hero h1 span:last-child{color:var(--mint-dark)}
 
