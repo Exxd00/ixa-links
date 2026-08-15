@@ -12,17 +12,27 @@ function easeInOutCubic(value) {
   return value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2;
 }
 
-export default function IXAEye3D({ active = false }) {
+export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
   const stageRef = useRef(null);
   const canvasRef = useRef(null);
   const apiRef = useRef(null);
   const activeRef = useRef(active);
+  const themeRef = useRef(theme);
+  const onBurstRef = useRef(onBurst);
   const [ready, setReady] = useState(false);
   const [bursting, setBursting] = useState(false);
 
   useEffect(() => {
     activeRef.current = active;
   }, [active]);
+
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
+
+  useEffect(() => {
+    onBurstRef.current = onBurst;
+  }, [onBurst]);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -54,7 +64,7 @@ export default function IXAEye3D({ active = false }) {
 
       const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
       renderer.setClearColor(0x000000, 0);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, coarsePointer ? 1.35 : 1.7));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.12;
@@ -76,11 +86,12 @@ export default function IXAEye3D({ active = false }) {
 
       const pointerTarget = new THREE.Vector2(0, 0);
       const pointerCurrent = new THREE.Vector2(0, 0);
-      const clock = new THREE.Clock();
+      const animationStart = performance.now();
       const loader = new loaderModule.GLTFLoader();
       const pieces = [];
       let model;
       let burstStart = -1;
+      let appliedTheme = '';
 
       const resize = () => {
         const rect = stage.getBoundingClientRect();
@@ -113,7 +124,36 @@ export default function IXAEye3D({ active = false }) {
             basePosition,
             baseRotation,
             direction,
+            pupil: name.includes('Pupil_'),
             spin: new THREE.Vector3((index % 3 - 1) * 0.7, ((index + 1) % 3 - 1) * 0.65, (index % 2 ? 1 : -1) * 0.8),
+          });
+        });
+      };
+
+      const applyTheme = () => {
+        if (!model || appliedTheme === themeRef.current) return;
+        appliedTheme = themeRef.current;
+        model.traverse((child) => {
+          if (!child.isMesh) return;
+          const materials = Array.isArray(child.material) ? child.material : [child.material];
+          materials.forEach((material) => {
+            if (!material) return;
+            if (/Graphite Edge/i.test(material.name)) {
+              if (appliedTheme === 'light') {
+                material.color.set(0x64e0d5);
+                material.metalness = 0.34;
+                material.roughness = 0.3;
+                material.emissive?.set(0x2dbcb0);
+                material.emissiveIntensity = 0.16;
+              } else {
+                material.color.set(0x07110f);
+                material.metalness = 0.82;
+                material.roughness = 0.19;
+                material.emissive?.set(0x000000);
+                material.emissiveIntensity = 0;
+              }
+              material.needsUpdate = true;
+            }
           });
         });
       };
@@ -139,6 +179,7 @@ export default function IXAEye3D({ active = false }) {
         });
         root.add(model);
         collectPieces(model);
+        applyTheme();
         setReady(true);
       }, undefined, () => {
         if (!disposed) setReady(false);
@@ -147,6 +188,7 @@ export default function IXAEye3D({ active = false }) {
       const startBurst = () => {
         if (!model || reducedMotion || burstStart >= 0) return;
         burstStart = performance.now();
+        onBurstRef.current?.(stage.getBoundingClientRect());
         setBursting(true);
       };
 
@@ -168,16 +210,19 @@ export default function IXAEye3D({ active = false }) {
       const applyBurst = (now) => {
         if (burstStart < 0) return;
         const elapsed = (now - burstStart) / 1000;
-        let amount;
-        if (elapsed < 0.32) amount = easeOutCubic(elapsed / 0.32);
-        else if (elapsed < 0.43) amount = 1;
-        else if (elapsed < 1.18) amount = 1 - easeInOutCubic((elapsed - 0.43) / 0.75);
-        else {
-          amount = 0;
+        if (elapsed >= 2.35) {
           burstStart = -1;
           setBursting(false);
         }
-        pieces.forEach(({ part, basePosition, baseRotation, direction, spin }) => {
+        pieces.forEach(({ part, basePosition, baseRotation, direction, spin, pupil }) => {
+          let amount;
+          if (elapsed < 0.28) amount = easeOutCubic(elapsed / 0.28);
+          else if (pupil && elapsed < 1.7) amount = 1;
+          else if (pupil && elapsed < 2.35) amount = 1 - easeInOutCubic((elapsed - 1.7) / 0.65);
+          else if (!pupil && elapsed < 0.42) amount = 1;
+          else if (!pupil && elapsed < 1.02) amount = 1 - easeInOutCubic((elapsed - 0.42) / 0.6);
+          else amount = 0;
+          if (pupil) part.visible = elapsed < 0.34 || elapsed > 2.23;
           part.position.copy(basePosition).addScaledVector(direction, amount);
           part.rotation.set(
             baseRotation.x + spin.x * amount,
@@ -192,7 +237,8 @@ export default function IXAEye3D({ active = false }) {
           frame = 0;
           return;
         }
-        const elapsed = clock.getElapsedTime();
+        const elapsed = (now - animationStart) / 1000;
+        applyTheme();
         pointerCurrent.lerp(pointerTarget, 0.075);
         if (!coarsePointer && !reducedMotion) {
           root.rotation.y = pointerCurrent.x * 0.19;
@@ -277,8 +323,8 @@ export default function IXAEye3D({ active = false }) {
     >
       <canvas ref={canvasRef} className="eye3d-canvas" aria-hidden="true" />
       <svg className="eye3d-fallback" viewBox="0 0 1000 520" aria-hidden="true">
-        <path d="M58 250C236 86 364 28 476 26v78c-94 4-193 47-310 146 117 99 216 142 310 146v78C364 472 236 414 58 250Z" />
-        <path d="M942 250C764 86 636 28 524 26v78c94 4 193 47 310 146-117 99-216 142-310 146v78C636 472 764 414 942 250Z" />
+        <path d="M58 250C236 86 364 28 476 26v60c-88 4-162 58-231 164 69 106 143 160 231 164v60C364 472 236 414 58 250Z" />
+        <path d="M942 250C764 86 636 28 524 26v60c88 4 162 58 231 164-69 106-143 160-231 164v60C636 472 764 414 942 250Z" />
         <polygon points="500,178 562,214 562,286 500,322 438,286 438,214" />
       </svg>
     </button>

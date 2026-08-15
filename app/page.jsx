@@ -27,8 +27,8 @@ function IXALogo({ className = '', active = false, interactive = false }) {
 
   const content = <>
     <svg viewBox="0 0 1000 520" aria-hidden="true">
-      <path className="logo-base" d="M58 250C236 86 364 28 476 26v78c-94 4-193 47-310 146 117 99 216 142 310 146v78C364 472 236 414 58 250Z" />
-      <path className="logo-base" d="M942 250C764 86 636 28 524 26v78c94 4 193 47 310 146-117 99-216 142-310 146v78C636 472 764 414 942 250Z" />
+      <path className="logo-base" d="M58 250C236 86 364 28 476 26v60c-88 4-162 58-231 164 69 106 143 160 231 164v60C364 472 236 414 58 250Z" />
+      <path className="logo-base" d="M942 250C764 86 636 28 524 26v60c88 4 162 58 231 164-69 106-143 160-231 164v60C636 472 764 414 942 250Z" />
       <circle className="logo-pupil" cx="500" cy="250" r="72" />
       <circle className="logo-focus-ring" cx="500" cy="250" r="112" />
       <path className="logo-contour logo-contour-left" d="M465 112C378 121 286 164 185 250c101 86 193 129 280 138" />
@@ -104,8 +104,8 @@ function useAnimationCycle(enabled) {
         setPhase('idle');
         return;
       }
-      const elapsed = (performance.now() - cycleStart) % 14000;
-      const next = elapsed < 1600 ? ['logo', 1600] : elapsed < 2400 ? ['idle', 2400] : elapsed < 6600 ? ['leads', 6600] : elapsed < 8000 ? ['idle', 8000] : elapsed < 12200 ? ['smm', 12200] : ['idle', 14000];
+      const elapsed = (performance.now() - cycleStart) % 15400;
+      const next = elapsed < 1600 ? ['logo', 1600] : elapsed < 2400 ? ['idle', 2400] : elapsed < 7800 ? ['leads', 7800] : elapsed < 8800 ? ['idle', 8800] : elapsed < 14200 ? ['smm', 14200] : ['idle', 15400];
       setPhase(next[0]);
       timer = window.setTimeout(update, Math.max(40, next[1] - elapsed));
     };
@@ -130,11 +130,19 @@ function LeadsStory({ active }) {
     <div className={`service-story leads-story${active ? ' story-active' : ''}`} aria-hidden="true">
       <svg className="story-path" viewBox="0 0 180 126" preserveAspectRatio="none">
         <path d="M45 23 C91 23 72 54 112 58 S137 91 91 101" />
-        <circle className="story-signal lead-signal" cx="0" cy="0" r="3" />
+        <g className="story-signal lead-signal">
+          <circle className="signal-ripple" r="7" />
+          <circle className="signal-core" r="3.2" />
+        </g>
       </svg>
       <div className="lead-search story-step">
         <svg viewBox="0 0 20 20"><circle cx="8" cy="8" r="5"/><path d="m12 12 5 5"/></svg>
-        <span>Google Ads Agentur</span>
+        <span className="search-loop">
+          <span>Mehr Leads</span>
+          <span>Mehr Anfragen</span>
+          <span>Google Ads Agentur</span>
+          <span>Messbare Anfragen</span>
+        </span>
       </div>
       <div className="lead-result story-step"><small>Anzeige</small><b>IXA Agency</b><span>Mehr Anfragen gewinnen</span></div>
       <div className="lead-page story-step">
@@ -153,11 +161,28 @@ function LeadsStory({ active }) {
 }
 
 function SmmStory({ active }) {
+  const [views, setViews] = useState(2400);
+
+  useEffect(() => {
+    if (!active) return undefined;
+    let value = 1280;
+    setViews(value);
+    const timer = window.setInterval(() => {
+      value += 34;
+      if (value > 2860) value = 1280;
+      setViews(value);
+    }, 95);
+    return () => window.clearInterval(timer);
+  }, [active]);
+
   return (
     <div className={`service-story smm-story${active ? ' story-active' : ''}`} aria-hidden="true">
       <svg className="story-path" viewBox="0 0 180 126" preserveAspectRatio="none">
         <path d="M69 29 C134 4 169 44 137 69 S166 111 112 108" />
-        <circle className="story-signal smm-signal" cx="0" cy="0" r="3" />
+        <g className="story-signal smm-signal">
+          <circle className="signal-ripple" r="7" />
+          <circle className="signal-core" r="3.2" />
+        </g>
       </svg>
       <div className="social-profile story-step">
         <div className="profile-head">
@@ -170,23 +195,26 @@ function SmmStory({ active }) {
           <i className="reel"/><i/><i className="reel"/>
         </div>
       </div>
-      <span className="engagement-node node-like story-step">♥</span>
-      <span className="engagement-node node-comment story-step">●</span>
-      <span className="engagement-node node-save story-step">⌑</span>
-      <div className="reach-chip story-step"><b>2.4K</b><span>Views</span></div>
+      <span className="engagement-node node-like story-step"><svg viewBox="0 0 24 24"><path d="M20.8 4.7a5.4 5.4 0 0 0-7.6 0L12 5.9l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.7a5.4 5.4 0 0 0 0-7.6Z"/></svg></span>
+      <span className="engagement-node node-comment story-step"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.5 9.5 0 0 1-4-.9L3 21l1.7-4.6A8.5 8.5 0 1 1 21 11.5Z"/></svg></span>
+      <span className="engagement-node node-save story-step"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4V3Z"/></svg></span>
+      <div className="reach-chip story-step"><b>{(views / 1000).toFixed(1)}K</b><span>Views</span></div>
       <div className="social-message story-step"><b>Neue Nachricht</b><span>Ich interessiere mich…</span></div>
       <div className="demand-badge story-step"><span className="demand-check">✓</span><span className="demand-copy"><b>Neue Anfrage</b><small>via Social Media</small></span></div>
     </div>
   );
 }
 
-function ServiceCard({ type, href, active, reduced }) {
+function ServiceCard({ type, href, active, reduced, externalRef, energized }) {
   const { ref, visible } = useElementVisibility();
   const leads = type === 'leads';
   return (
     <a
-      ref={ref}
-      className={`service-card ${leads ? 'leads-card' : 'smm-card'}`}
+      ref={(node) => {
+        ref.current = node;
+        if (externalRef) externalRef.current = node;
+      }}
+      className={`service-card ${leads ? 'leads-card' : 'smm-card'}${energized ? ' is-energized' : ''}`}
       href={href}
       aria-label={`${leads ? 'IXA Leads' : 'IXA SMM'} öffnen`}
     >
@@ -205,6 +233,10 @@ function ServiceCard({ type, href, active, reduced }) {
 export default function Home() {
   const [theme, setTheme] = useState('light');
   const [showSplash, setShowSplash] = useState(true);
+  const [energyTransfer, setEnergyTransfer] = useState(null);
+  const leadsCardRef = useRef(null);
+  const smmCardRef = useRef(null);
+  const transferTimerRef = useRef(null);
   const phase = useAnimationCycle(!showSplash);
 
   useEffect(() => {
@@ -224,11 +256,43 @@ export default function Home() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => () => window.clearTimeout(transferTimerRef.current), []);
+
+  const handleLogoBurst = (eyeRect) => {
+    const leadsRect = leadsCardRef.current?.getBoundingClientRect();
+    const smmRect = smmCardRef.current?.getBoundingClientRect();
+    if (!leadsRect || !smmRect) return;
+    window.clearTimeout(transferTimerRef.current);
+    const id = Date.now();
+    setEnergyTransfer({
+      id,
+      startX: eyeRect.left + eyeRect.width / 2,
+      startY: eyeRect.top + eyeRect.height / 2,
+      leadsX: leadsRect.left + leadsRect.width * 0.72,
+      leadsY: leadsRect.top + leadsRect.height * 0.5,
+      smmX: smmRect.left + smmRect.width * 0.72,
+      smmY: smmRect.top + smmRect.height * 0.5,
+    });
+    transferTimerRef.current = window.setTimeout(() => setEnergyTransfer(null), 2500);
+  };
+
   if (showSplash) return <SplashScreen />;
 
   return (
     <>
     <LiveParticleField theme={theme} />
+    {energyTransfer && (
+      <div key={energyTransfer.id} className="energy-transfer" aria-hidden="true">
+        <i
+          className="energy-shard energy-shard-leads"
+          style={{ '--start-x': `${energyTransfer.startX}px`, '--start-y': `${energyTransfer.startY}px`, '--end-x': `${energyTransfer.leadsX}px`, '--end-y': `${energyTransfer.leadsY}px` }}
+        />
+        <i
+          className="energy-shard energy-shard-smm"
+          style={{ '--start-x': `${energyTransfer.startX}px`, '--start-y': `${energyTransfer.startY}px`, '--end-x': `${energyTransfer.smmX}px`, '--end-y': `${energyTransfer.smmY}px` }}
+        />
+      </div>
+    )}
     <main className="home-shell">
       <div className="home-topbar">
         <button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}>
@@ -237,14 +301,14 @@ export default function Home() {
       </div>
 
       <header className="home-hero">
-        <IXAEye3D active={phase === 'logo'} />
+        <IXAEye3D active={phase === 'logo'} theme={theme} onBurst={handleLogoBurst} />
         <strong className="home-brand-name">IXA AGENCY</strong>
         <h1><span>Sichtbar.</span><span>Messbar.</span><span>Wirksam.</span></h1>
       </header>
 
       <section className="service-grid" aria-label="IXA Leistungen">
-        <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'}/>
-        <ServiceCard type="smm" href="https://ixa-smm.de" active={phase === 'smm'} reduced={phase === 'reduced'}/>
+        <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'} externalRef={leadsCardRef} energized={Boolean(energyTransfer)}/>
+        <ServiceCard type="smm" href="https://ixa-smm.de" active={phase === 'smm'} reduced={phase === 'reduced'} externalRef={smmCardRef} energized={Boolean(energyTransfer)}/>
       </section>
 
       <nav className="social-links" aria-label="IXA Kontakt">

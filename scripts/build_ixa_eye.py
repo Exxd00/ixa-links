@@ -47,9 +47,9 @@ def logo_point(point):
 def left_logo_polygon():
     points = []
     points += cubic((58, 250), (236, 86), (364, 28), (476, 26))[:-1]
-    points += [(476, 104)]
-    points += cubic((476, 104), (382, 108), (283, 151), (166, 250))[:-1]
-    points += cubic((166, 250), (283, 349), (382, 392), (476, 396))[:-1]
+    points += [(476, 86)]
+    points += cubic((476, 86), (388, 90), (314, 144), (245, 250))[:-1]
+    points += cubic((245, 250), (314, 356), (388, 410), (476, 414))[:-1]
     points += [(476, 474)]
     points += cubic((476, 474), (364, 472), (236, 414), (58, 250))[:-1]
     return [logo_point(point) for point in points]
@@ -142,8 +142,8 @@ iris_frame = material("Hex Frame", GRAPHITE, metallic=0.9, roughness=0.13)
 
 left_points = left_logo_polygon()
 right_points = [(-point[0], point[1]) for point in left_points]
-left_wing = curve_prism("Wing_Left", left_points, 0.14, 0.045, mint_metal, graphite_metal)
-right_wing = curve_prism("Wing_Right", right_points, 0.14, 0.045, mint_metal, graphite_metal)
+left_wing = curve_prism("Wing_Left", left_points, 0.09, 0.018, mint_metal, graphite_metal)
+right_wing = curve_prism("Wing_Right", right_points, 0.09, 0.018, mint_metal, graphite_metal)
 
 iris_segments = []
 for segment_index in range(6):
