@@ -4,10 +4,8 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import IXAEye3D from './IXAEye3D';
 import LiveParticleField from './LiveParticleField';
-
-const INSTAGRAM = 'https://www.instagram.com/ixa_agency?igsh=MXd2aDI3dGx5dTZ0cA==';
-const WHATSAPP = 'https://wa.me/491629155408';
-const LINKEDIN = 'https://www.linkedin.com/company/ixa-agency';
+import { HOME_STRUCTURED_DATA, INSTAGRAM_LINK, LINKEDIN, PHONE, PHONE_DISPLAY, WHATSAPP } from './site-config';
+import { trackEvent } from './tracking';
 
 function IXALogo({ className = '', active = false, interactive = false }) {
   const [pressed, setPressed] = useState(false);
@@ -214,7 +212,7 @@ function SmmStory({ active }) {
   );
 }
 
-function ServiceCard({ type, href, active, reduced, externalRef, energized }) {
+function ServiceCard({ type, href, active, reduced, externalRef, energized, onSelect }) {
   const { ref, visible } = useElementVisibility();
   const leads = type === 'leads';
   const Card = leads ? 'a' : 'article';
@@ -226,7 +224,7 @@ function ServiceCard({ type, href, active, reduced, externalRef, energized }) {
       }}
       className={`service-card ${leads ? 'leads-card' : 'smm-card'}${energized ? ' is-energized' : ''}`}
       {...(leads
-        ? { href, 'aria-label': 'IXA Leads öffnen' }
+        ? { href, onClick: onSelect, 'aria-label': 'IXA Leads öffnen' }
         : { 'aria-label': 'IXA SMM – bald verfügbar' })}
     >
       <div className="card-copy">
@@ -273,6 +271,7 @@ export default function Home() {
   useEffect(() => () => window.clearTimeout(transferTimerRef.current), []);
 
   const handleLogoBurst = (eyeRect) => {
+    trackEvent('logo_interaction', { action: 'burst', theme, component: 'hero_logo' });
     const leadsRect = leadsCardRef.current?.getBoundingClientRect();
     const smmRect = smmCardRef.current?.getBoundingClientRect();
     if (!leadsRect || !smmRect) return;
@@ -290,8 +289,22 @@ export default function Home() {
     transferTimerRef.current = window.setTimeout(() => setEnergyTransfer(null), 2500);
   };
 
+  const handleThemeChange = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    trackEvent('theme_change', { previous_theme: theme, selected_theme: nextTheme, component: 'theme_toggle' });
+    setTheme(nextTheme);
+  };
+
+  const handleContact = (channel, destinationType) => {
+    trackEvent('contact_select', { channel, destination_type: destinationType });
+  };
+
   return (
     <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_STRUCTURED_DATA).replace(/</g, '\u003c') }}
+    />
     {showSplash && <SplashScreen />}
     {!showSplash && <LiveParticleField theme={theme} />}
     {energyTransfer && (
@@ -308,7 +321,7 @@ export default function Home() {
     )}
     <main className={`home-shell${showSplash ? ' is-preloading' : ''}`} aria-hidden={showSplash || undefined} inert={showSplash ? true : undefined}>
       <div className="home-topbar">
-        <button className="theme-toggle" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}>
+        <button className="theme-toggle" type="button" onClick={handleThemeChange} aria-label={theme === 'dark' ? 'Hellen Modus aktivieren' : 'Dunklen Modus aktivieren'}>
           <Icon key={theme} name={theme === 'dark' ? 'sun' : 'moon'}/>
         </button>
       </div>
@@ -320,18 +333,18 @@ export default function Home() {
       </header>
 
       <section className="service-grid" aria-label="IXA Leistungen">
-        <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'} externalRef={leadsCardRef} energized={Boolean(energyTransfer)}/>
+        <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'} externalRef={leadsCardRef} energized={Boolean(energyTransfer)} onSelect={() => trackEvent('select_content', { content_type: 'service', item_id: 'ixa_leads', availability: 'available', destination: 'ixa-leads.de' })}/>
         <ServiceCard type="smm" active={phase === 'smm'} reduced={phase === 'reduced'} externalRef={smmCardRef} energized={Boolean(energyTransfer)}/>
       </section>
 
       <nav className="social-links" aria-label="IXA Kontakt">
-        <a className="social-link social-linkedin" href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Icon name="linkedin"/></a>
-        <a className="social-link social-instagram" href={INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Icon name="instagram"/></a>
-        <a className="social-link social-whatsapp" href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><Icon name="whatsapp"/></a>
-        <a className="social-link social-phone" href="tel:+491629155408" aria-label="+49 162 9155408 anrufen"><Icon name="phone"/></a>
+        <a className="social-link social-linkedin" href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onClick={() => handleContact('linkedin', 'external')}><Icon name="linkedin"/></a>
+        <a className="social-link social-instagram" href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" aria-label="Instagram" onClick={() => handleContact('instagram', 'external')}><Icon name="instagram"/></a>
+        <a className="social-link social-whatsapp" href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" onClick={() => handleContact('whatsapp', 'external')}><Icon name="whatsapp"/></a>
+        <a className="social-link social-phone" href={`tel:${PHONE}`} aria-label={`${PHONE_DISPLAY} anrufen`} onClick={() => handleContact('phone', 'telephone')}><Icon name="phone"/></a>
       </nav>
 
-      <footer className="home-footer"><span>© IXA</span><Link href="/datenschutz">Datenschutz</Link><Link href="/impressum">Impressum</Link></footer>
+      <footer className="home-footer"><span>© IXA</span><Link href="/datenschutz" onClick={() => trackEvent('legal_select', { document: 'datenschutz', destination_path: '/datenschutz' })}>Datenschutz</Link><Link href="/impressum" onClick={() => trackEvent('legal_select', { document: 'impressum', destination_path: '/impressum' })}>Impressum</Link></footer>
     </main>
     </>
   );

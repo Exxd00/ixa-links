@@ -343,7 +343,7 @@ export default function IXAEye3D({ active = false, theme = 'light', onBurst }) {
       ref={stageRef}
       className={`eye3d-stage${ready ? ' is-ready' : ''}${bursting ? ' is-bursting' : ''}`}
       type="button"
-      onPointerDown={() => apiRef.current?.burst()}
+      onClick={() => apiRef.current?.burst()}
       aria-label="IXA 3D Logo – zum Auflösen berühren"
     >
       <canvas ref={canvasRef} className="eye3d-canvas" aria-hidden="true" />

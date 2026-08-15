@@ -1,6 +1,16 @@
 import Legal from '../legal';
 
-export const metadata = { title: 'Datenschutz — IXA' };
+export const metadata = {
+  title: 'Datenschutz',
+  description: 'Datenschutzhinweise der IXA Agency.',
+  alternates: { canonical: '/datenschutz' },
+  openGraph: {
+    type: 'website',
+    url: '/datenschutz',
+    title: 'Datenschutz | IXA Agency',
+    description: 'Datenschutzhinweise der IXA Agency.',
+  },
+};
 
 export default function Datenschutz() {
   return (

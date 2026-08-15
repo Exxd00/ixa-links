@@ -1,6 +1,16 @@
 import Legal from '../legal';
 
-export const metadata = { title: 'Impressum — IXA' };
+export const metadata = {
+  title: 'Impressum',
+  description: 'Impressum und Anbieterinformationen der IXA Agency.',
+  alternates: { canonical: '/impressum' },
+  openGraph: {
+    type: 'website',
+    url: '/impressum',
+    title: 'Impressum | IXA Agency',
+    description: 'Impressum und Anbieterinformationen der IXA Agency.',
+  },
+};
 
 export default function Impressum() {
   return (
