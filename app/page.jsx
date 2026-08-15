@@ -98,15 +98,23 @@ function SmmStory({ motion, onFinish }) {
   return (
     <div className={`service-story smm-story story-${motion}`} aria-hidden="true">
       <svg className="story-path" viewBox="0 0 180 126" preserveAspectRatio="none">
-        <path d="M44 67 C72 67 77 23 111 24 S126 83 95 101" />
+        <path d="M69 29 C134 4 169 44 137 69 S166 111 112 108" />
       </svg>
-      <div className="social-post story-step">
-        <div className="post-head"><i/><span>@ixa_agency</span></div>
-        <div className="post-visual"><b>Content</b><i/></div>
-        <div className="post-actions"><span>♡</span><span>○</span><span>⌑</span></div>
+      <div className="social-profile story-step">
+        <div className="profile-head">
+          <i className="profile-avatar"/>
+          <span><b>@ixa_agency</b><small>Content Studio</small></span>
+        </div>
+        <div className="profile-stories"><i/><i/><i/></div>
+        <div className="profile-media">
+          <i/><i className="reel"/><i/>
+          <i className="reel"/><i/><i className="reel"/>
+        </div>
       </div>
-      <div className="reach-badge story-step"><b>Reach</b><span>Aufmerksamkeit</span></div>
-      <div className="social-message story-step"><b>Neue Nachricht</b><span>Hallo, ich interessiere mich…</span></div>
+      <span className="engagement-node node-like story-step">♥</span>
+      <span className="engagement-node node-comment story-step">●</span>
+      <span className="engagement-node node-save story-step">⌑</span>
+      <div className="social-message story-step"><b>Neue Nachricht</b><span>Ich interessiere mich…</span></div>
       <div className="demand-badge story-step" onAnimationEnd={onFinish}><span>✓</span><b>Neue Anfrage</b></div>
     </div>
   );
