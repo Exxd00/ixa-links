@@ -10,13 +10,13 @@ function createParticle(width, height, index) {
   return {
     x: Math.random() * width,
     y: startsNearBottom ? height * (0.72 + Math.random() * 0.32) : Math.random() * height,
-    radius: 0.45 + depth * 1.05,
+    radius: 0.7 + depth * 1.3,
     speed: 12 + depth * 22,
     drift: (Math.random() - 0.5) * (4 + depth * 5),
     phase: Math.random() * TAU,
     pulse: 0.18 + Math.random() * 0.34,
     depth,
-    accent: index % 7 === 0,
+    accent: index % 5 === 0,
   };
 }
 
@@ -56,8 +56,8 @@ export default function LiveParticleField({ theme }) {
       canvas.style.height = `${height}px`;
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       const targetCount = coarsePointer
-        ? Math.max(28, Math.min(42, Math.round((width * height) / 9000)))
-        : Math.max(48, Math.min(76, Math.round((width * height) / 15000)));
+        ? Math.max(44, Math.min(64, Math.round((width * height) / 6000)))
+        : Math.max(72, Math.min(110, Math.round((width * height) / 9000)));
       particles = Array.from({ length: targetCount }, (_, index) => createParticle(width, height, index));
     };
 
@@ -79,7 +79,7 @@ export default function LiveParticleField({ theme }) {
         }
 
         const shimmer = reducedMotion ? 0.56 : 0.5 + Math.sin(time * 0.0007 + particle.phase) * particle.pulse;
-        const baseAlpha = theme === 'dark' ? 0.1 + particle.depth * 0.24 : 0.11 + particle.depth * 0.2;
+        const baseAlpha = theme === 'dark' ? 0.16 + particle.depth * 0.32 : 0.18 + particle.depth * 0.32;
         const risingFade = reducedMotion ? 1 : Math.min(1, Math.max(0.18, (height + 12 - particle.y) / 72));
         const alpha = Math.max(0.025, baseAlpha * shimmer * risingFade);
 
