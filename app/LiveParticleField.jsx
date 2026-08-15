@@ -44,7 +44,7 @@ export default function LiveParticleField({ theme }) {
 
     const colors = theme === 'dark'
       ? { soft: '185,244,238', mint: '100,224,213' }
-      : { soft: '27,30,30', mint: '45,188,176' };
+      : { soft: '100,224,213', mint: '45,188,176' };
 
     const resize = () => {
       width = Math.max(1, window.innerWidth);
@@ -78,7 +78,7 @@ export default function LiveParticleField({ theme }) {
         }
 
         const shimmer = reducedMotion ? 0.56 : 0.5 + Math.sin(time * 0.0007 + particle.phase) * particle.pulse;
-        const baseAlpha = theme === 'dark' ? 0.1 + particle.depth * 0.24 : 0.045 + particle.depth * 0.11;
+        const baseAlpha = theme === 'dark' ? 0.1 + particle.depth * 0.24 : 0.11 + particle.depth * 0.2;
         const alpha = Math.max(0.025, baseAlpha * shimmer);
 
         if (particle.accent) {
