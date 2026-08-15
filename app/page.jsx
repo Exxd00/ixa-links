@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import IXAEye3D from './IXAEye3D';
 
 const INSTAGRAM = 'https://www.instagram.com/ixa_agency?igsh=MXd2aDI3dGx5dTZ0cA==';
 const WHATSAPP = 'https://wa.me/491629155408';
@@ -233,7 +234,8 @@ export default function Home() {
       </div>
 
       <header className="home-hero">
-        <IXALogo className="home-brand" active={phase === 'logo'} interactive />
+        <IXAEye3D active={phase === 'logo'} />
+        <strong className="home-brand-name">IXA AGENCY</strong>
         <h1><span>Sichtbar.</span><span>Messbar.</span><span>Wirksam.</span></h1>
       </header>
 
