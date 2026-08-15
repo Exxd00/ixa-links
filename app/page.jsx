@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const INSTAGRAM = 'https://www.instagram.com/ixa_agency?igsh=MXd2aDI3dGx5dTZ0cA==';
 const WHATSAPP = 'https://wa.me/491629155408';
+const LINKEDIN = 'https://www.linkedin.com/company/ixa-agency';
 
 function EyeLogo({ className = '', interactive = false, onActivate, compact = false }) {
   const ref = useRef(null);
@@ -139,11 +140,11 @@ function Splash({ onEnter, short }) {
 }
 
 function OrbitSculpture() {
-  return <div className="orbit" aria-hidden="true"><i/><i/><i/><b/><span>♥</span><span>➤</span><span>●</span></div>;
+  return <div className="social-phone" aria-hidden="true"><div className="phone-screen"><i/><i/><i/><b/></div><span>♥</span><span>●</span><span>↗</span></div>;
 }
 
 function LeadsSculpture() {
-  return <div className="target" aria-hidden="true"><i/><i/><i/><span/><span/><span/><b/></div>;
+  return <div className="leads-dashboard" aria-hidden="true"><span>12.458<small>+23,6%</small></span><span>284<small>+18,7%</small></span><span>24,31 €<small>−11,2%</small></span><i/><b/></div>;
 }
 
 function Icon({ name }) {
@@ -152,6 +153,7 @@ function Icon({ name }) {
     whatsapp: <><path d="M20.5 11.7a8.5 8.5 0 0 1-12.6 7.5L3 21l1.7-4.7a8.5 8.5 0 1 1 15.8-4.6Z"/><path d="M8 8c1 4 4 7 8 8l1.2-2.1-2.6-1.2-.9 1c-1.8-.8-3.2-2.2-4-4l1-.9L9.5 6.3 8 8Z"/></>,
     phone: <path d="M7 3H4.5A1.5 1.5 0 0 0 3 4.5C3 13.6 10.4 21 19.5 21a1.5 1.5 0 0 0 1.5-1.5V17l-4-1-1.2 2a15.5 15.5 0 0 1-9.8-9.8L8 7 7 3Z"/>,
     email: <><rect x="2.5" y="4" width="19" height="16" rx="2"/><path d="m4 7 8 6 8-6"/></>,
+    linkedin: <><path d="M7 9v10M7 5.5v.1M11 19v-6c0-2 1.2-3.5 3.2-3.5S18 10.8 18 13v6M3.5 9H7v10H3.5z"/><path d="M11 9h3v1.5"/></>,
     theme: <path d="M20.2 15.2A8.5 8.5 0 0 1 8.8 3.8 8.6 8.6 0 1 0 20.2 15.2Z"/>,
   };
   return <svg viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
@@ -178,15 +180,14 @@ function ServiceCard({ type, href }) {
   };
   const content = (
     <>
-      <span className="card-index">{isSoon ? '01' : '02'}</span>
       <div className="card-copy">
-        <h2>{isSoon ? 'IXA SMM' : 'IXA Leads'}</h2>
-        <p>{isSoon ? 'Social Media Management' : 'Websites & Lead Generation'}</p>
+        <h2><span className="mini-eye">◉</span> IXA <em>{isSoon ? 'SMM' : 'LEADS'}</em></h2>
+        <h3>{isSoon ? <>Aus Aufmerksamkeit<br/>wird Nachfrage.</> : <>Aus Suche<br/>wird Anfrage.</>}</h3>
+        <ul>{isSoon ? <><li>Social Media Management</li><li>Content Creation</li><li>Paid Social Ads</li></> : <><li>Google Ads</li><li>Landingpages</li><li>Tracking & Optimierung</li></>}</ul>
         <small>{isSoon ? 'Demnächst' : 'ixa-leads.de'}</small>
       </div>
       {isSoon ? <OrbitSculpture /> : <LeadsSculpture />}
-      <span className={`status-pill ${isSoon ? '' : 'active'}`}>{isSoon ? 'Bald verfügbar' : 'Aktiv'}</span>
-      {!isSoon && <span className="enter-label">Website öffnen <b>→</b></span>}
+      <span className={`service-cta ${isSoon ? 'disabled' : ''}`}>{isSoon ? 'Bald verfügbar' : 'Zu IXA Leads'} <b>→</b></span>
     </>
   );
   if (isSoon) return <article ref={cardRef} className="service-card soon-card" aria-disabled="true">{content}</article>;
@@ -197,45 +198,58 @@ function Hub({ theme, setTheme }) {
   return (
     <main className="hub">
       <ParticleField phase="hub" />
-      <button className="hub-theme" type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Farbschema wechseln"><Icon name="theme"/></button>
       <header className="hub-hero">
         <EyeLogo compact />
-        <span>IXA Links Hub</span>
-        <div className="hero-tech-eye" aria-hidden="true"><i/><i/><b/></div>
-        <h1>Fokus.<br/>Aufbau.<br/><em>Wachstum.</em></h1>
-        <p>Zwei Services. Ein Ziel:<br/>Dein digitales Wachstum.</p>
+        <h1>Sichtbar. Messbar. Wirksam.</h1>
+        <p>Zwei starke Wege. Ein Ziel: <em>Wachstum für dein Unternehmen.</em></p>
       </header>
       <section className="cards" aria-label="IXA Angebote">
-        <ServiceCard type="smm" />
         <ServiceCard type="leads" href="https://ixa-leads.de" />
+        <ServiceCard type="smm" />
       </section>
       <nav className="socials" aria-label="Kontakt und Einstellungen">
+        <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><Icon name="linkedin"/></a>
         <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label="Instagram"><Icon name="instagram"/></a>
         <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><Icon name="whatsapp"/></a>
         <a href="tel:+491629155408" aria-label="+49 162 9155408 anrufen"><Icon name="phone"/></a>
-        <a href="mailto:info@ixa-agency.com" aria-label="E-Mail schreiben"><Icon name="email"/></a>
       </nav>
-      <footer><Link href="/impressum">Impressum</Link><span>·</span><Link href="/datenschutz">Datenschutz</Link></footer>
+      <footer><Link href="/datenschutz">Datenschutz</Link><span>·</span><Link href="/impressum">Impressum</Link></footer>
     </main>
   );
 }
 
+function ThemeChooser({ onChoose }) {
+  return <main className="theme-choice">
+    <div className="choice-orbit" aria-hidden="true"><i/><i/><i/></div>
+    <EyeLogo compact />
+    <p>Willkommen bei IXA</p>
+    <h1>Wähle deinen<br/>Fokus.</h1>
+    <span>Du kannst die Darstellung später über deine Browserdaten zurücksetzen.</span>
+    <div className="theme-options">
+      <button className="light-choice" type="button" onClick={() => onChoose('light')}><b>☀</b><strong>Hell</strong><small>Klar · Offen · Präzise</small></button>
+      <button className="dark-choice" type="button" onClick={() => onChoose('dark')}><b>◐</b><strong>Dunkel</strong><small>Fokussiert · Ruhig · Premium</small></button>
+    </div>
+  </main>;
+}
+
 export default function Home() {
-  const [entered, setEntered] = useState(false);
+  const [stage, setStage] = useState('loading');
   const [shortSplash, setShortSplash] = useState(false);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   useEffect(() => {
     setShortSplash(sessionStorage.getItem('ixa-intro-seen') === '1');
     const saved = localStorage.getItem('ixa-theme');
-    if (saved) setTheme(saved);
+    if (saved) { setTheme(saved); setStage('splash'); }
+    else setStage('choose');
   }, []);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem('ixa-theme', theme);
-  }, [theme]);
+    if (stage === 'splash' || stage === 'hub') localStorage.setItem('ixa-theme', theme);
+  }, [theme, stage]);
   const enter = useCallback(() => {
     sessionStorage.setItem('ixa-intro-seen', '1');
-    setEntered(true);
+    setStage('hub');
   }, []);
-  return <div className={`app ${entered ? 'has-entered' : ''}`}>{entered ? <Hub theme={theme} setTheme={setTheme}/> : <Splash onEnter={enter} short={shortSplash}/>}</div>;
+  const chooseTheme = (value) => { setTheme(value); localStorage.setItem('ixa-theme', value); setStage('splash'); };
+  return <div className={`app stage-${stage}`}>{stage === 'loading' ? null : stage === 'choose' ? <ThemeChooser onChoose={chooseTheme}/> : stage === 'splash' ? <Splash onEnter={enter} short={shortSplash}/> : <Hub theme={theme} setTheme={setTheme}/>}</div>;
 }
