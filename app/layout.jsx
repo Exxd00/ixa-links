@@ -1,5 +1,6 @@
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from './site-config';
+import Analytics from './Analytics';
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -56,7 +57,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="de" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

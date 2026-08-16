@@ -133,6 +133,42 @@ button{font:inherit}
 @media(max-width:760px){
   .service-card{backdrop-filter:none;-webkit-backdrop-filter:none}.service-card::before{animation:none}
 }
+
+.consent-banner {
+  position: fixed;
+  z-index: 10000;
+  right: clamp(14px, 3vw, 32px);
+  bottom: clamp(14px, 3vw, 32px);
+  left: clamp(14px, 3vw, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 20px;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 18px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, .2);
+  backdrop-filter: blur(18px);
+}
+
+.consent-banner strong { display: block; margin-bottom: 5px; }
+.consent-banner p { max-width: 650px; margin: 0 0 5px; font-size: .92rem; line-height: 1.45; }
+.consent-banner a { color: inherit; font-size: .84rem; }
+.consent-actions { display: flex; gap: 9px; flex-shrink: 0; }
+.consent-actions button { min-height: 42px; padding: 0 16px; border: 1px solid currentColor; border-radius: 999px; font: inherit; font-weight: 700; cursor: pointer; }
+.consent-decline { color: inherit; background: transparent; }
+.consent-accept { color: #07110f; background: #66f2c2; border-color: #66f2c2 !important; }
+.analytics-preferences { padding: 0; border: 0; color: #178f85; background: transparent; font: inherit; text-decoration: underline; cursor: pointer; }
+
+@media (max-width: 680px) {
+  .consent-banner { align-items: stretch; flex-direction: column; gap: 14px; }
+  .consent-actions { justify-content: stretch; }
+  .consent-actions button { flex: 1; }
+}
 @media(max-width:360px){
   .home-shell{width:calc(100% - 28px)}.home-topbar{height:36px}.theme-toggle{width:34px;height:34px}.theme-toggle svg{width:15px;height:15px}.home-hero{padding:9px 0 13px}.home-brand{gap:11px}.home-brand svg{width:184px}.home-brand strong{font-size:15px}.eye3d-stage{width:184px}.home-brand-name{margin-top:11px;font-size:15px}.home-hero h1{margin-top:9px;font-size:10.5px}.service-grid{gap:12px}.service-card{min-height:160px;padding:11px;border-radius:16px;grid-template-columns:minmax(105px,.82fr) minmax(0,1.18fr)}.card-copy h2{font-size:20px}.card-copy p{font-size:10.5px}.service-story{border-radius:10px}.social-links{gap:9px;margin:11px 0 6px}.social-links a{width:38px;height:38px}.social-links svg{width:16px;height:16px}
 }

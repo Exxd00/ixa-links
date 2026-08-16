@@ -1,4 +1,5 @@
 import Legal from '../legal';
+import { AnalyticsPreferencesButton } from '../Analytics';
 
 export const metadata = {
   title: 'Datenschutz',
@@ -38,6 +39,11 @@ export default function Datenschutz() {
 
       <h2>5. Externe Links</h2>
       <p>Diese Website verlinkt auf LinkedIn, Instagram, WhatsApp und weitere IXA-Angebote. Daten werden erst an den jeweiligen Anbieter übermittelt, wenn Sie einen solchen Link aktiv öffnen. Danach gelten die Datenschutzbestimmungen des jeweiligen Anbieters.</p>
+
+      <h2>6. Google Analytics</h2>
+      <p>Wenn Sie ausdrücklich zustimmen, verwenden wir Google Analytics, einen Analysedienst von Google, um Seitenaufrufe, Scrolltiefe und ausgewählte Interaktionen auszuwerten. Dazu können Nutzungsdaten, Geräteinformationen und eine gekürzte IP-Adresse verarbeitet werden. Ohne Ihre Zustimmung bleibt die Analysespeicherung deaktiviert.</p>
+      <p>Sie können Ihre Entscheidung jederzeit ändern. Weitere Informationen zur Datenverarbeitung durch Google finden Sie in den Datenschutzhinweisen von Google.</p>
+      <p><AnalyticsPreferencesButton /></p>
     </Legal>
   );
 }

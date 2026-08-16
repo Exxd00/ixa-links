@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import IXAEye3D from './IXAEye3D';
 import LiveParticleField from './LiveParticleField';
 import { HOME_STRUCTURED_DATA, INSTAGRAM_LINK, LINKEDIN, PHONE, PHONE_DISPLAY, WHATSAPP } from './site-config';
-import { trackEvent } from './tracking';
+import { trackEvent, trackLead, trackOutbound } from './tracking';
 
 function IXALogo({ className = '', active = false, interactive = false }) {
   const [pressed, setPressed] = useState(false);
@@ -295,8 +295,19 @@ export default function Home() {
     setTheme(nextTheme);
   };
 
-  const handleContact = (channel, destinationType) => {
-    trackEvent('contact_select', { channel, destination_type: destinationType });
+  const handleSocial = (channel, destination) => {
+    trackEvent('contact_select', { channel, destination_type: 'external', contact_context: 'social_navigation' });
+    trackOutbound(destination, 'social_navigation', { channel });
+  };
+
+  const handleServiceSelect = () => {
+    trackEvent('select_content', {
+      content_type: 'service',
+      item_id: 'ixa_leads',
+      availability: 'available',
+      destination: 'ixa-leads.de',
+    });
+    trackOutbound('ixa-leads.de', 'service_card', { service: 'ixa_leads' });
   };
 
   return (
@@ -333,15 +344,15 @@ export default function Home() {
       </header>
 
       <section className="service-grid" aria-label="IXA Leistungen">
-        <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'} externalRef={leadsCardRef} energized={Boolean(energyTransfer)} onSelect={() => trackEvent('select_content', { content_type: 'service', item_id: 'ixa_leads', availability: 'available', destination: 'ixa-leads.de' })}/>
+        <ServiceCard type="leads" href="https://ixa-leads.de" active={phase === 'leads'} reduced={phase === 'reduced'} externalRef={leadsCardRef} energized={Boolean(energyTransfer)} onSelect={handleServiceSelect}/>
         <ServiceCard type="smm" active={phase === 'smm'} reduced={phase === 'reduced'} externalRef={smmCardRef} energized={Boolean(energyTransfer)}/>
       </section>
 
       <nav className="social-links" aria-label="IXA Kontakt">
-        <a className="social-link social-linkedin" href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onClick={() => handleContact('linkedin', 'external')}><Icon name="linkedin"/></a>
-        <a className="social-link social-instagram" href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" aria-label="Instagram" onClick={() => handleContact('instagram', 'external')}><Icon name="instagram"/></a>
-        <a className="social-link social-whatsapp" href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" onClick={() => handleContact('whatsapp', 'external')}><Icon name="whatsapp"/></a>
-        <a className="social-link social-phone" href={`tel:${PHONE}`} aria-label={`${PHONE_DISPLAY} anrufen`} onClick={() => handleContact('phone', 'telephone')}><Icon name="phone"/></a>
+        <a className="social-link social-linkedin" href={LINKEDIN} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" onClick={() => handleSocial('linkedin', 'linkedin.com')}><Icon name="linkedin"/></a>
+        <a className="social-link social-instagram" href={INSTAGRAM_LINK} target="_blank" rel="noopener noreferrer" aria-label="Instagram" onClick={() => handleSocial('instagram', 'instagram.com')}><Icon name="instagram"/></a>
+        <a className="social-link social-whatsapp" href={WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" onClick={() => trackLead('whatsapp', 'external')}><Icon name="whatsapp"/></a>
+        <a className="social-link social-phone" href={`tel:${PHONE}`} aria-label={`${PHONE_DISPLAY} anrufen`} onClick={() => trackLead('phone', 'telephone')}><Icon name="phone"/></a>
       </nav>
 
       <footer className="home-footer"><span>© IXA</span><Link href="/datenschutz" onClick={() => trackEvent('legal_select', { document: 'datenschutz', destination_path: '/datenschutz' })}>Datenschutz</Link><Link href="/impressum" onClick={() => trackEvent('legal_select', { document: 'impressum', destination_path: '/impressum' })}>Impressum</Link></footer>

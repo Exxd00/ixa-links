@@ -1,6 +1,7 @@
 export const SITE_URL = 'https://ixa-agency.de';
 export const SITE_NAME = 'IXA Agency';
 export const SITE_DESCRIPTION = 'IXA Agency verbindet messbare Lead-Generierung mit klarem Social Media Marketing.';
+export const GOOGLE_ANALYTICS_ID = 'G-MC97FW20HT';
 
 export const INSTAGRAM = 'https://www.instagram.com/ixa_agency/';
 export const INSTAGRAM_LINK = 'https://www.instagram.com/ixa_agency?igsh=MXd2aDI3dGx5dTZ0cA==';
